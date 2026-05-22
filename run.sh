@@ -20,7 +20,7 @@ if [ $? -ne 0 ]; then
     pip3 install -q requests beautifulsoup4 lxml python-dateutil pandas
 fi
 
-echo "✓ Dependencies ready"
+echo "Dependencies ready"
 echo ""
 
 # Run crawler
@@ -40,12 +40,7 @@ echo "Crawl Complete!"
 echo "=========================================="
 echo ""
 echo "Output files generated:"
-echo "  📄 output/space_cves_cwe_format.json  (JSON format - CWE style)"
-echo "  📊 output/space_cves_cwe_format.csv   (CSV format - CWE compatible)"
-echo "  📋 output/crawl_report.txt            (Summary report)"
-echo ""
-echo "To view results:"
-echo "  • CSV: open output/space_cves_cwe_format.csv"
-echo "  • JSON: cat output/space_cves_cwe_format.json | python3 -m json.tool"
-echo "  • Report: cat output/crawl_report.txt"
+echo "  output/space_cves.json  (JSON format - CWE style)"
+echo "  output/space_cves.csv   (CSV format - CWE compatible)"
+echo "  output/crawl_report.txt            (Summary report)"
 echo ""

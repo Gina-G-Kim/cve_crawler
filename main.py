@@ -40,7 +40,6 @@ SOURCE_URLS = {
 
 CSV_HEADERS = [
     "type",
-    "spec_version",
     "id",
     "created",
     "modified",
@@ -67,170 +66,106 @@ CSV_HEADERS = [
     "external_references",
 ]
 
-JSON_FIELD_COMMENTS = {
-    "type": "레코드 유형",
-    "id": "식별자",
-    "spec_version": "사양 버전",
-    "created": "생성 시각",
-    "modified": "수정 시각",
-    "name": "이름",
-    "description": "설명",
-    "x_cve_source_sections": "소스별 섹션 목록",
-    "source_name": "소스 이름",
-    "record_count": "레코드 수",
-    "objects": "객체 목록",
-    "x_cve_id": "CVE 식별자",
-    "x_cve_severity": "심각도",
-    "x_cve_cvss_score": "CVSS 점수",
-    "x_cve_cvss_vector": "CVSS 벡터",
-    "x_cve_cwe_ids": "CWE ID 목록",
-    "x_cve_vendor": "공급업체",
-    "x_cve_product": "제품",
-    "x_cve_affected_versions": "영향받는 버전 목록",
-    "x_cve_references": "참고 링크 목록",
-    "x_cve_source_urls": "수집 소스 URL 목록",
-    "x_cve_source_names": "수집 소스 이름 목록",
-    "x_cve_mitigation": "대응 방안",
-    "x_cve_impact": "영향",
-    "x_cve_exploitability": "공격 가능성",
-    "x_cve_epss_score": "EPSS 점수",
-    "x_cve_epss_percentile": "EPSS 백분위",
-    "x_cve_space_related": "우주보안 관련 여부",
-    "x_cve_notes": "메모",
-    "external_references": "외부 참고 목록",
-    "created_at": "생성 시각",
-    "identity_class": "식별자 분류",
-    "x_cve_export_format": "내보내기 형식",
-}
+def tree_line(label: str, description: str = "", indent: int = 0) -> str:
+    prefix = "  " * indent
+    if description:
+        return f"{prefix}- {label} // {description}"
+    return f"{prefix}- {label}"
 
 
-def json_field_comment(field_name: str) -> str:
-    return JSON_FIELD_COMMENTS.get(field_name, f"{field_name} 필드")
-
-
-def json_list_item_comment(parent_key: Optional[str], item: Any) -> str:
-    if parent_key == "objects" and isinstance(item, dict):
-        object_type = clean_text(item.get("type", ""))
-        if object_type == "identity":
-            return "identity 객체"
-        if object_type == "x-cve-section":
-            return "x-cve-section 객체"
-        if object_type == "vulnerability":
-            return "vulnerability 객체"
-        if object_type:
-            return f"{object_type} 객체"
-    if parent_key == "x_cve_source_sections":
-        return "소스별 섹션 항목"
-    return "항목"
-
-
-def render_jsonc_document(value: Any) -> str:
-    if isinstance(value, dict):
-        lines = ["{"]
-        items = list(value.items())
-        for index, (key, item_value) in enumerate(items):
-            lines.extend(render_jsonc_field(key, item_value, 1, index == len(items) - 1))
-        lines.append("}")
-        return "\n".join(lines) + "\n"
-    return "\n".join(render_jsonc_value(value, level=0, parent_key=None, last=True)) + "\n"
-
-
-def render_jsonc_value(value: Any, level: int, parent_key: Optional[str], last: bool) -> List[str]:
-    pad = " " * (2 * level)
-    comma = "," if not last else ""
-    if isinstance(value, dict):
-        lines: List[str] = []
-        items = list(value.items())
-        for index, (key, item_value) in enumerate(items):
-            lines.extend(render_jsonc_field(key, item_value, level, index == len(items) - 1))
-        return lines
-    if isinstance(value, list):
-        lines = []
-        for index, item in enumerate(value):
-            item_last = index == len(value) - 1
-            if isinstance(item, dict):
-                lines.append(f"{pad}// {json_list_item_comment(parent_key, item)}")
-                lines.append(f"{pad}{{")
-                lines.extend(render_jsonc_value(item, level + 1, parent_key=parent_key, last=True))
-                lines.append(f"{pad}}}{',' if not item_last else ''}")
-            elif isinstance(item, list):
-                lines.append(f"{pad}[")
-                lines.extend(render_jsonc_value(item, level + 1, parent_key=parent_key, last=True))
-                lines.append(f"{pad}]{',' if not item_last else ''}")
-            else:
-                lines.append(f"{pad}{json.dumps(item, ensure_ascii=False)}{',' if not item_last else ''}")
-        return lines
-    return [f"{pad}{json.dumps(value, ensure_ascii=False)}{comma}"]
-
-
-def render_jsonc_field(key: str, value: Any, level: int, last: bool) -> List[str]:
-    pad = " " * (2 * level)
-    comma = "," if not last else ""
-    lines = [f"{pad}// {json_field_comment(key)}"]
-    if isinstance(value, dict):
-        lines.append(f'{pad}"{key}": {{')
-        lines.extend(render_jsonc_value(value, level + 1, parent_key=key, last=True))
-        lines.append(f"{pad}}}{comma}")
-    elif isinstance(value, list):
-        lines.append(f'{pad}"{key}": [')
-        lines.extend(render_jsonc_value(value, level + 1, parent_key=key, last=True))
-        lines.append(f"{pad}]{comma}")
-    else:
-        lines.append(f'{pad}"{key}": {json.dumps(value, ensure_ascii=False)}{comma}')
-    return lines
-
-
-def build_json_tree_lines() -> List[str]:
-    return [
-        "JSON 구조 트리",
-        "- bundle",
-        "  - type // 번들 유형",
-        "  - id // 번들 식별자",
-        "  - x_cve_source_sections // 소스별 섹션 목록",
-        "    - source_name // 소스 이름",
-        "    - record_count // 레코드 수",
-        "  - objects // 객체 목록",
-        "    - identity 객체",
-        "      - type // 레코드 유형",
-        "      - id // 식별자",
-        "      - created // 생성 시각",
-        "      - modified // 수정 시각",
-        "      - name // 이름",
-        "      - identity_class // 식별자 분류",
-        "      - x_cve_export_format // 내보내기 형식",
-        "    - x-cve-section 객체",
-        "      - type // 레코드 유형",
-        "      - id // 식별자",
-        "      - name // 이름",
-        "      - description // 설명",
-        "      - record_count // 레코드 수",
-        "    - vulnerability 객체",
-        "      - type // 레코드 유형",
-        "      - id // 식별자",
-        "      - created // 생성 시각",
-        "      - modified // 수정 시각",
-        "      - name // 이름",
-        "      - description // 설명",
-        "      - x_cve_id // CVE 식별자",
-        "      - x_cve_severity // 심각도",
-        "      - x_cve_cvss_score // CVSS 점수",
-        "      - x_cve_cvss_vector // CVSS 벡터",
-        "      - x_cve_cwe_ids // CWE ID 목록",
-        "      - x_cve_vendor // 공급업체",
-        "      - x_cve_product // 제품",
-        "      - x_cve_affected_versions // 영향받는 버전 목록",
-        "      - x_cve_references // 참고 링크 목록",
-        "      - x_cve_source_urls // 수집 소스 URL 목록",
-        "      - x_cve_source_names // 수집 소스 이름 목록",
-        "      - x_cve_mitigation // 대응 방안",
-        "      - x_cve_impact // 영향",
-        "      - x_cve_exploitability // 공격 가능성",
-        "      - x_cve_epss_score // EPSS 점수",
-        "      - x_cve_epss_percentile // EPSS 백분위",
-        "      - x_cve_space_related // 우주보안 관련 여부",
-        "      - x_cve_notes // 메모",
-        "      - external_references // 외부 참고 목록",
+def build_report_tree_lines() -> List[str]:
+    lines = ["CSV / JSON 필드 트리"]
+    csv_fields = [
+        ("type", "레코드 유형"),
+        ("id", "vulnerability 식별자"),
+        ("created", "생성 시각"),
+        ("modified", "수정 시각"),
+        ("name", "취약점 이름"),
+        ("description", "취약점 설명"),
+        ("x_cve_id", "CVE 식별자"),
+        ("x_cve_severity", "심각도"),
+        ("x_cve_cvss_score", "CVSS 점수"),
+        ("x_cve_cvss_vector", "CVSS 벡터"),
+        ("x_cve_cwe_ids", "CWE ID 목록"),
+        ("x_cve_vendor", "공급업체"),
+        ("x_cve_product", "제품"),
+        ("x_cve_affected_versions", "영향받는 버전 목록"),
+        ("x_cve_references", "참고 링크 목록"),
+        ("x_cve_source_urls", "수집 소스 URL 목록"),
+        ("x_cve_source_names", "수집 소스 이름 목록"),
+        ("x_cve_mitigation", "대응 방안"),
+        ("x_cve_impact", "영향"),
+        ("x_cve_exploitability", "공격 가능성"),
+        ("x_cve_epss_score", "EPSS 점수"),
+        ("x_cve_epss_percentile", "EPSS 백분위"),
+        ("x_cve_space_related", "우주보안 관련 여부"),
+        ("x_cve_notes", "메모"),
+        ("external_references", "외부 참고 목록"),
     ]
+    for name, description in csv_fields:
+        lines.append(tree_line(name, description, 1))
+
+    lines.append(tree_line("JSON bundle", "출력 번들 최상위 구조", 0))
+    lines.append(tree_line("type", "번들 유형", 1))
+    lines.append(tree_line("id", "번들 식별자", 1))
+    lines.append(tree_line("x_cve_source_sections", "소스별 섹션 목록", 1))
+    lines.append(tree_line("source_name", "소스 이름", 2))
+    lines.append(tree_line("record_count", "레코드 수", 2))
+    lines.append(tree_line("objects", "객체 목록", 1))
+
+    lines.append(tree_line("identity 객체", "최상위 식별 객체", 2))
+    for name, description in [
+        ("type", "레코드 유형"),
+        ("id", "identity 식별자"),
+        ("created", "생성 시각"),
+        ("modified", "수정 시각"),
+        ("name", "이름"),
+        ("identity_class", "식별자 분류"),
+        ("x_cve_export_format", "내보내기 형식"),
+    ]:
+        lines.append(tree_line(name, description, 3))
+
+    lines.append(tree_line("x-cve-section 객체", "소스별 묶음 객체", 2))
+    for name, description in [
+        ("type", "레코드 유형"),
+        ("id", "x-cve-section 식별자"),
+        ("name", "소스 이름"),
+        ("description", "섹션 설명"),
+        ("record_count", "레코드 수"),
+    ]:
+        lines.append(tree_line(name, description, 3))
+
+    lines.append(tree_line("vulnerability 객체", "취약점 본문 객체", 2))
+    vuln_fields = [
+        ("type", "레코드 유형"),
+        ("id", "vulnerability 식별자"),
+        ("created", "생성 시각"),
+        ("modified", "수정 시각"),
+        ("name", "취약점 이름"),
+        ("description", "취약점 설명"),
+        ("x_cve_id", "CVE 식별자"),
+        ("x_cve_severity", "심각도"),
+        ("x_cve_cvss_score", "CVSS 점수"),
+        ("x_cve_cvss_vector", "CVSS 벡터"),
+        ("x_cve_cwe_ids", "CWE ID 목록"),
+        ("x_cve_vendor", "공급업체"),
+        ("x_cve_product", "제품"),
+        ("x_cve_affected_versions", "영향받는 버전 목록"),
+        ("x_cve_references", "참고 링크 목록"),
+        ("x_cve_source_urls", "수집 소스 URL 목록"),
+        ("x_cve_source_names", "수집 소스 이름 목록"),
+        ("x_cve_mitigation", "대응 방안"),
+        ("x_cve_impact", "영향"),
+        ("x_cve_exploitability", "공격 가능성"),
+        ("x_cve_epss_score", "EPSS 점수"),
+        ("x_cve_epss_percentile", "EPSS 백분위"),
+        ("x_cve_space_related", "우주보안 관련 여부"),
+        ("x_cve_notes", "메모"),
+        ("external_references", "외부 참고 목록"),
+    ]
+    for name, description in vuln_fields:
+        lines.append(tree_line(name, description, 3))
+    return lines
 
 
 def utc_now_iso() -> str:
@@ -1345,8 +1280,7 @@ class SpaceSecurityCrawler:
             for record in records:
                 writer.writerow(record.to_csv_row())
 
-    def write_json(self, path: Path, records: Sequence[CVERecord], comment_header: bool = True) -> None:
-        # Build the JSON bundle but do NOT include the human summary inside the JSON body.
+    def write_json(self, path: Path, records: Sequence[CVERecord]) -> None:
         bundle = {
             "type": "bundle",
             "id": f"bundle--{uuid.uuid4()}",
@@ -1360,8 +1294,7 @@ class SpaceSecurityCrawler:
             "objects": self._build_json_objects(records),
         }
 
-        json_text = render_jsonc_document(bundle) if comment_header else json.dumps(bundle, indent=2, ensure_ascii=False) + "\n"
-        path.write_text(json_text, encoding="utf-8")
+        path.write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     def write_report(self, path: Path, records: Sequence[CVERecord]) -> None:
         severities = Counter(record.severity or "Unknown" for record in records)
@@ -1385,8 +1318,8 @@ class SpaceSecurityCrawler:
             handle.write("\nSample CVEs:\n")
             for record in list(records)[:10]:
                 handle.write(f"- {record.cve_id}: {record.title}\n")
-            handle.write("\nJSON 구조 트리:\n")
-            for line in build_json_tree_lines():
+            handle.write("\nCSV / JSON 필드 트리:\n")
+            for line in build_report_tree_lines():
                 handle.write(f"{line}\n")
 
 
