@@ -1,0 +1,329 @@
+{
+  "satellite_asset_taxonomy": {
+    "categories": [
+      {
+        "category": "Hardware",
+        "types": [
+          {
+            "type": "System",
+            "sub_types": [
+              {
+                "sub_type": "Flight Computer",
+                "assets": [
+                  {"name": "OBC (On-Board Computer)", "traceability": "REQ-001"},
+                  {"name": "Flight Management Unit (FMU)", "traceability": "REQ-002"},
+                  {"name": "Command & Data Handling (CDH)", "traceability": "REQ-003"},
+                  {"name": "IPC", "traceability": "REQ-001b"}
+                ]
+              },
+              {
+                "sub_type": "Attitude Determination",
+                "assets": [
+                  {"name": "Star Tracker", "traceability": "REQ-004"},
+                  {"name": "Sun Sensor", "traceability": "REQ-005"},
+                  {"name": "IMU (Inertial Measurement Unit)", "traceability": "REQ-006"},
+                  {"name": "Gyroscope", "traceability": "REQ-006b"},
+                  {"name": "Accelerometer", "traceability": "REQ-006c"},
+                  {"name": "Magnetometer", "traceability": "REQ-006d"}
+                ]
+              },
+              {
+                "sub_type": "Propulsion",
+                "assets": [
+                  {"name": "Ion Thruster", "traceability": "REQ-007"},
+                  {"name": "Chemical Thruster", "traceability": "REQ-008"},
+                  {"name": "Propellant Tank", "traceability": "REQ-009"},
+                  {"name": "Thruster Controller", "traceability": "REQ-010"}
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Sub-System",
+            "sub_types": [
+              {
+                "sub_type": "Processor",
+                "assets": [
+                  {"name": "Microcontroller", "traceability": "REQ-011"},
+                  {"name": "DSP (Digital Signal Processor)", "traceability": "REQ-012"},
+                  {"name": "FPGA", "traceability": "REQ-013"},
+                  {"name": "ARM Processor", "traceability": "REQ-013b"},
+                  {"name": "PowerPC", "traceability": "REQ-013c"},
+                  {"name": "MIPS", "traceability": "REQ-013d"},
+                  {"name": "Intel Processor", "traceability": "REQ-013e"}
+                ]
+              },
+              {
+                "sub_type": "Power",
+                "assets": [
+                  {"name": "Power Supply Unit (PSU)", "traceability": "REQ-014"},
+                  {"name": "Battery Management System (BMS)", "traceability": "REQ-015"},
+                  {"name": "Solar Panel", "traceability": "REQ-016"},
+                  {"name": "DC-DC Converter", "traceability": "REQ-017"},
+                  {"name": "Charger", "traceability": "REQ-018"},
+                  {"name": "Lithium Battery", "traceability": "REQ-019"},
+                  {"name": "Nickel Battery", "traceability": "REQ-020"}
+                ]
+              },
+              {
+                "sub_type": "Time",
+                "assets": [
+                  {"name": "RTC (Real-Time Clock)", "traceability": "REQ-021"},
+                  {"name": "Atomic Clock", "traceability": "REQ-022"},
+                  {"name": "GPS Receiver", "traceability": "REQ-023"},
+                  {"name": "Clock Oscillator", "traceability": "REQ-024"}
+                ]
+              },
+              {
+                "sub_type": "Memory",
+                "assets": [
+                  {"name": "RAM", "traceability": "REQ-025"},
+                  {"name": "ROM", "traceability": "REQ-026"},
+                  {"name": "Flash Memory", "traceability": "REQ-027"},
+                  {"name": "EEPROM", "traceability": "REQ-028"},
+                  {"name": "Magnetic Tape", "traceability": "REQ-029"}
+                ]
+              },
+              {
+                "sub_type": "Sensor",
+                "assets": [
+                  {"name": "Temperature Sensor", "traceability": "REQ-030"},
+                  {"name": "Radiation Sensor", "traceability": "REQ-031"},
+                  {"name": "Pressure Sensor", "traceability": "REQ-032"},
+                  {"name": "Humidity Sensor", "traceability": "REQ-033"},
+                  {"name": "Light Sensor", "traceability": "REQ-034"}
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Communication",
+            "sub_types": [
+              {
+                "sub_type": "Transceiver",
+                "assets": [
+                  {"name": "S-Band Transponder", "traceability": "REQ-035"},
+                  {"name": "UHF Transceiver", "traceability": "REQ-036"},
+                  {"name": "Ka-Band Modem", "traceability": "REQ-037"},
+                  {"name": "X-Band Transmitter", "traceability": "REQ-038"},
+                  {"name": "L-Band Receiver", "traceability": "REQ-039"},
+                  {"name": "VHF Transceiver", "traceability": "REQ-040"}
+                ]
+              },
+              {
+                "sub_type": "Antenna",
+                "assets": [
+                  {"name": "Patch Antenna", "traceability": "REQ-041"},
+                  {"name": "Helical Antenna", "traceability": "REQ-042"},
+                  {"name": "Phased Array Antenna", "traceability": "REQ-043"},
+                  {"name": "Horn Antenna", "traceability": "REQ-044"},
+                  {"name": "Dipole Antenna", "traceability": "REQ-045"}
+                ]
+              },
+              {
+                "sub_type": "Modem",
+                "assets": [
+                  {"name": "Software Modem", "traceability": "REQ-046"},
+                  {"name": "Hardware Modem", "traceability": "REQ-047"}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "category": "Software",
+        "types": [
+          {
+            "type": "Module",
+            "sub_types": [
+              {
+                "sub_type": "Service",
+                "assets": [
+                  {"name": "Message Transfer", "traceability": "REQ-048"},
+                  {"name": "Time Management", "traceability": "REQ-049"},
+                  {"name": "Event Management", "traceability": "REQ-050"},
+                  {"name": "Housekeeping", "traceability": "REQ-051"},
+                  {"name": "Command Service", "traceability": "REQ-052"},
+                  {"name": "Telemetry Service", "traceability": "REQ-053"}
+                ]
+              },
+              {
+                "sub_type": "OSAL",
+                "assets": [
+                  {"name": "Memory Access Manager", "traceability": "REQ-054"},
+                  {"name": "Task Scheduler", "traceability": "REQ-055"},
+                  {"name": "Device Abstraction", "traceability": "REQ-056"},
+                  {"name": "OSAL", "traceability": "REQ-057"},
+                  {"name": "Module OSAL", "traceability": "REQ-058"}
+                ]
+              },
+              {
+                "sub_type": "Communication",
+                "assets": [
+                  {"name": "Inter-Process Communication", "traceability": "REQ-059"},
+                  {"name": "Socket Service", "traceability": "REQ-060"},
+                  {"name": "Protocol Handler", "traceability": "REQ-061"}
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Func",
+            "sub_types": [
+              {
+                "sub_type": "Platform Support",
+                "assets": [
+                  {"name": "RTEMS", "traceability": "REQ-062"},
+                  {"name": "VxWorks", "traceability": "REQ-063"},
+                  {"name": "CAN", "traceability": "REQ-064"},
+                  {"name": "Contiki", "traceability": "REQ-065"},
+                  {"name": "FreeRTOS", "traceability": "REQ-066"},
+                  {"name": "Zephyr", "traceability": "REQ-067"},
+                  {"name": "uCOS", "traceability": "REQ-068"},
+                  {"name": "Linux Real-Time", "traceability": "REQ-069"}
+                ]
+              },
+              {
+                "sub_type": "Executive Service",
+                "assets": [
+                  {"name": "Software Bus Service (SB)", "traceability": "REQ-070"},
+                  {"name": "Event Service (EVS)", "traceability": "REQ-071"},
+                  {"name": "Table Service (TBL)", "traceability": "REQ-072"},
+                  {"name": "Command Service", "traceability": "REQ-073"},
+                  {"name": "Telemetry Service", "traceability": "REQ-074"},
+                  {"name": "Checksum Service", "traceability": "REQ-075"}
+                ]
+              },
+              {
+                "sub_type": "Middleware",
+                "assets": [
+                  {"name": "Data Distribution Service (DDS)", "traceability": "REQ-076"},
+                  {"name": "CORBA", "traceability": "REQ-077"},
+                  {"name": "ROS", "traceability": "REQ-078"},
+                  {"name": "Message Broker", "traceability": "REQ-079"}
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Bootloader",
+            "sub_types": [
+              {
+                "sub_type": "Firmware Loader",
+                "assets": [
+                  {"name": "U-Boot", "traceability": "REQ-080"},
+                  {"name": "GRUB", "traceability": "REQ-081"},
+                  {"name": "Barebox", "traceability": "REQ-082"}
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Device Driver",
+            "sub_types": [
+              {
+                "sub_type": "Communication Driver",
+                "assets": [
+                  {"name": "UART Driver", "traceability": "REQ-083"},
+                  {"name": "Ethernet Driver", "traceability": "REQ-084"},
+                  {"name": "SPI Driver", "traceability": "REQ-085"},
+                  {"name": "I2C Driver", "traceability": "REQ-086"}
+                ]
+              },
+              {
+                "sub_type": "Hardware Driver",
+                "assets": [
+                  {"name": "GPIO Driver", "traceability": "REQ-087"},
+                  {"name": "Timer Driver", "traceability": "REQ-088"},
+                  {"name": "Watchdog Driver", "traceability": "REQ-089"},
+                  {"name": "ADC Driver", "traceability": "REQ-090"}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "category": "Application",
+        "types": [
+          {
+            "type": "Module",
+            "sub_types": [
+              {
+                "sub_type": "Data Management",
+                "assets": [
+                  {"name": "Memory Access Manager", "traceability": "REQ-091"},
+                  {"name": "File Manager", "traceability": "REQ-092"},
+                  {"name": "CFDP", "traceability": "REQ-093"},
+                  {"name": "Database Manager", "traceability": "REQ-094"}
+                ]
+              },
+              {
+                "sub_type": "Telemetry",
+                "assets": [
+                  {"name": "Housekeeping (HK)", "traceability": "REQ-095"},
+                  {"name": "Data Recorder", "traceability": "REQ-096"},
+                  {"name": "Telemetry Parser", "traceability": "REQ-097"},
+                  {"name": "Telemetry Formatter", "traceability": "REQ-098"}
+                ]
+              },
+              {
+                "sub_type": "Ground Station Interface",
+                "assets": [
+                  {"name": "Command Receiver", "traceability": "REQ-099"},
+                  {"name": "Telemetry Transmitter", "traceability": "REQ-100"},
+                  {"name": "Data Uplink", "traceability": "REQ-101"}
+                ]
+              },
+              {
+                "sub_type": "Autonomous Control",
+                "assets": [
+                  {"name": "Attitude Control", "traceability": "REQ-102"},
+                  {"name": "Orbital Control", "traceability": "REQ-103"},
+                  {"name": "Collision Avoidance", "traceability": "REQ-104"}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "category": "Network",
+        "types": [
+          {
+            "type": "Protocol",
+            "sub_types": [
+              {
+                "sub_type": "Space Link",
+                "assets": [
+                  {"name": "CCSDS", "traceability": "REQ-105"},
+                  {"name": "AOS", "traceability": "REQ-106"},
+                  {"name": "TM", "traceability": "REQ-107"},
+                  {"name": "TC", "traceability": "REQ-108"}
+                ]
+              },
+              {
+                "sub_type": "Inter-Satellite",
+                "assets": [
+                  {"name": "ISL", "traceability": "REQ-109"},
+                  {"name": "Optical Link", "traceability": "REQ-110"},
+                  {"name": "RF Link", "traceability": "REQ-111"},
+                  {"name": "Laser Link", "traceability": "REQ-112"}
+                ]
+              },
+              {
+                "sub_type": "Terrestrial",
+                "assets": [
+                  {"name": "TCP/IP", "traceability": "REQ-113"},
+                  {"name": "UDP", "traceability": "REQ-114"},
+                  {"name": "MQTT", "traceability": "REQ-115"}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
