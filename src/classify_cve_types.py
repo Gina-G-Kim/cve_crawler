@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🛰️ CVE Product Type Classification - Taxonomy-First Strategy
+ CVE Product Type Classification - Taxonomy-First Strategy
 
 Classify each CVE into a 3-level type hierarchy (Category | Type | Sub-Type).
 
@@ -8,7 +8,7 @@ SATELLITE-FIRST CLASSIFICATION STRATEGY
 
 Supports both Hardware and Software products through a two-tier classification system:
 
-1️⃣ TAXONOMY-BASED (Primary - 🛰️ CHECKED FIRST)
+1 TAXONOMY-BASED (Primary - CHECKED FIRST)
    Source: config/satellite_asset_taxonomy.json
    Strategy: Match CVE products to satellite-specific assets
    Output Format: Category | Type > Sub-Type | Asset Name
@@ -19,7 +19,7 @@ Supports both Hardware and Software products through a two-tier classification s
      - Application | Module > Data Management | Memory Access Manager
    Priority: HIGH (checked first)
 
-2️⃣ LEGACY KEYWORD RULES (Fallback)
+2 LEGACY KEYWORD RULES (Fallback)
    Source: CATEGORY_RULES in this script
    Strategy: Match CVE products to generic software/hardware categories
    Output Format: Category | Type | Product Name
@@ -29,18 +29,18 @@ Supports both Hardware and Software products through a two-tier classification s
      - Hardware | Firmware | ios_xe
    Priority: MEDIUM (checked after Taxonomy fails)
 
-3️⃣ VENDOR-BASED RULES (Fallback)
+3 VENDOR-BASED RULES (Fallback)
    Strategy: Detect known hardware vendors
    Priority: LOW
 
-4️⃣ CATCH-ALL (Default)
+4 CATCH-ALL (Default)
    Output: Software | Application
 
 Classification Priority (first match wins):
-  ⭐ 1. Taxonomy Rules (satellite_asset_taxonomy.json) - SATELLITE-SPECIFIC
-  🔧 2. Legacy Keyword Rules (CATEGORY_RULES) - GENERIC
-  🏢 3. Vendor Rules (HW_VENDORS) - VENDOR-BASED
-  🎯 4. Catch-all (Software | Application) - DEFAULT
+   1. Taxonomy Rules (satellite_asset_taxonomy.json) - SATELLITE-SPECIFIC
+   2. Legacy Keyword Rules (CATEGORY_RULES) - GENERIC
+   3. Vendor Rules (HW_VENDORS) - VENDOR-BASED
+   4. Catch-all (Software | Application) - DEFAULT
 
 Key Improvements:
   - Taxonomy rules checked FIRST for domain-specific accuracy
@@ -87,7 +87,7 @@ class TypeRule:
     """A single classification rule."""
     category: str
     type_level: str
-    keywords: list  # list of lower-case keywords (substring match)
+    keywords: list # list of lower-case keywords (substring match)
     priority: int
 
 
@@ -178,7 +178,7 @@ CATEGORY_RULES: list[TypeRule] = [
             "simatic", "siemens_logo", "siplus", "plc",
             "micro850", "micro870", "st7_scadaconnect", "scada",
             # Networking devices (use specific model names to avoid false positives)
-            # NOTE: modem, access_point, router, switch removed — false positives
+            # NOTE: modem, access_point, router, switch removed false positives
             "ethernet_network_controllers", "ethernet_adapters",
             # Specific networking hardware (Siemens)
             "scalancem812",
@@ -193,8 +193,8 @@ CATEGORY_RULES: list[TypeRule] = [
             "extreme_networks",
             # Visual / sensor devices
             "telepresence", "camera", "dvr", "cctv",
-            # "scanner" and "printer" removed — no products match in the dataset
-            # "display" and "monitor" removed — too broad, matches apps/libraries
+            # "scanner" and "printer" removed no products match in the dataset
+            # "display" and "monitor" removed too broad, matches apps/libraries
             # Cameras (Cisco)
             "wvc200", "wvc210", "wvc2300", "wvc2400",
             "rvs4000", "pvc2300",
@@ -299,7 +299,7 @@ CATEGORY_RULES: list[TypeRule] = [
     # This ensures all products get a classification
     TypeRule(
         "Software", "Application",
-        [],  # Empty keyword list: matches everything (catch-all)
+        [], # Empty keyword list: matches everything (catch-all)
         100,
     ),
 
@@ -358,11 +358,11 @@ def load_taxonomy_rules() -> list[TaxonomyRule]:
                     keywords = keyword_variants(asset_name) + keyword_variants(sub_type)
                     keywords = sorted(set(k for k in keywords if k))
 
-                    # 🛰️ IMPROVED: Relaxed keyword filtering for satellite asset classification
+                    # IMPROVED: Relaxed keyword filtering for satellite asset classification
                     # Previously: Only kept keywords >= 5 chars (too restrictive)
                     # Now: Keep keywords >= 3 chars OR acronyms from parentheses
                     # This allows matching common satellite components like "CAN Bus", "RTC", "OBC", etc.
-                    
+
                     acronyms = set()
                     # Collect acronyms from the original asset name
                     for m in re.finditer(r"\(([A-Za-z]+)\)", asset_name):
@@ -373,7 +373,7 @@ def load_taxonomy_rules() -> list[TaxonomyRule]:
 
                     # CHANGE: Relax filter from >= 5 to >= 3 for better satellite asset matching
                     keywords = [k for k in keywords if len(k) >= 3 or k in acronyms]
-                    
+
                     # Ensure acronyms are included even if filtered
                     keywords.extend(list(acronyms))
                     keywords = sorted(set(keywords))
@@ -392,7 +392,7 @@ def load_taxonomy_rules() -> list[TaxonomyRule]:
     return rules
 
 
-TAXONOMY_RULES = None  # Loaded dynamically in main()
+TAXONOMY_RULES = None # Loaded dynamically in main()
 
 
 # ==== Helper functions ====
@@ -415,22 +415,22 @@ def get_all_products(product_str: str) -> list:
 def classify_product(product_str: str, vendor_str: str = "") -> tuple:
     """
     Classify product with Taxonomy-First strategy.
-    
-    ⭐ TAXONOMY-FIRST STRATEGY (Satellite-specific classification prioritized)
-    
+
+    TAXONOMY-FIRST STRATEGY (Satellite-specific classification prioritized)
+
     Priority order:
-    1. 🛰️ Taxonomy rules (satellite_asset_taxonomy.json) - **SATELLITE-SPECIFIC** 
+    1. Taxonomy rules (satellite_asset_taxonomy.json) - SATELLITE-SPECIFIC
        Output: Category | Type > Sub-Type | Asset Name
        Examples: Software | Module > Service | Message Transfer
-    
-    2. 🔧 Legacy keyword rules (CATEGORY_RULES) - Generic fallback
-       Output: Category | Type | Product Name  
+
+    2. Legacy keyword rules (CATEGORY_RULES) - Generic fallback
+       Output: Category | Type | Product Name
        Examples: Software | Operating System | ubuntu_linux
-    
-    3. 🏢 Vendor-based rules - Known hardware vendors
-    
-    4. 🎯 Catch-all - Software | Application (default)
-    
+
+    3. Vendor-based rules - Known hardware vendors
+
+    4. Catch-all - Software | Application (default)
+
     This ensures satellite-specific classification takes precedence over
     generic rules, maintaining domain-specific accuracy.
     """
@@ -438,11 +438,11 @@ def classify_product(product_str: str, vendor_str: str = "") -> tuple:
     if not all_prods:
         return ("Software", "Application", "Unknown")
 
-    # 1️⃣ TAXONOMY RULES FIRST (🛰️ Satellite-specific, HIGH priority)
+    # 1. TAXONOMY RULES FIRST (Satellite-specific, HIGH priority)
     for prod in all_prods:
         prod_lower = prod.lower()
         prod_compact = prod_lower.replace("_", "").replace("-", "").replace(" ", "")
-        
+
         for rule in TAXONOMY_RULES:
             for keyword in rule.keywords:
                 # Check both normalized and compact versions
@@ -450,9 +450,9 @@ def classify_product(product_str: str, vendor_str: str = "") -> tuple:
                     mapped_type = f"{rule.type_level} > {rule.sub_type}"
                     return (rule.category, mapped_type, rule.asset_name)
 
-    # 2️⃣ LEGACY KEYWORD RULES (🔧 Generic, FALLBACK)
+    # 2. LEGACY KEYWORD RULES (Generic, FALLBACK)
     for rule in CATEGORY_RULES:
-        if not rule.keywords:  # Skip catch-all rule for now
+        if not rule.keywords: # Skip catch-all rule for now
             continue
         for prod in all_prods:
             prod_lower = prod.lower()
@@ -460,7 +460,7 @@ def classify_product(product_str: str, vendor_str: str = "") -> tuple:
                 if keyword in prod_lower:
                     return (rule.category, rule.type_level, prod)
 
-    # 3️⃣ VENDOR-BASED RULES (🏢 Known hardware vendors)
+    # 3. VENDOR-BASED RULES (Known hardware vendors)
     if vendor_str:
         for vendor in vendor_str.split(";"):
             vendor_lower = vendor.strip().lower()
@@ -497,17 +497,17 @@ def classify_product(product_str: str, vendor_str: str = "") -> tuple:
             # Default to Hardware for known HW vendors with no matching keywords
             return ("Hardware", "Hardware", all_prods[0])
 
-    # 4️⃣ CATCH-ALL (🎯 Default fallback)
+    # 4. CATCH-ALL (Default fallback)
     return ("Software", "Application", all_prods[0])
 
 
 def build_product_info(vendor_str: str, product_str: str) -> str:
-    """Build human-readable product info: Vendor — Product."""
+    """Build human-readable product info: Vendor Product."""
     vendor = get_primary_vendor(vendor_str)
     product = get_primary_product(product_str)
     if vendor and product:
         # Replace underscores with spaces, title-case
-        return f"{vendor} — {product.replace('_', ' ')}"
+        return f"{vendor} {product.replace('_', ' ')}"
     return ""
 
 
@@ -524,26 +524,26 @@ def write_taxonomy(type_counts: dict, type_desc: dict) -> list:
         "Tertiary Source: Hardware Vendor Detection (HW_VENDORS)",
         "Fallback: Software | Application (catch-all)",
         "",
-        "Level 1 — Category:",
-        "  Hardware  : Physical devices, chips, sensors, controllers, etc.",
-        "  Software  : Programs, libraries, services, OS, etc.",
+        "Level 1 Category:",
+        " Hardware : Physical devices, chips, sensors, controllers, etc.",
+        " Software : Programs, libraries, services, OS, etc.",
         "",
-        "Level 2 — Type (from CATEGORY_RULES):",
-        "  Operating System     : OS-level software (Linux, Windows, etc.)",
-        "  Firmware             : Firmware/BIOS embedded in hardware",
-        "  Hardware             : Physical hardware components",
-        "  Library              : Libraries, frameworks, language runtimes",
-        "  Application          : Standalone applications and services (default)",
+        "Level 2 Type (from CATEGORY_RULES):",
+        " Operating System : OS-level software (Linux, Windows, etc.)",
+        " Firmware : Firmware/BIOS embedded in hardware",
+        " Hardware : Physical hardware components",
+        " Library : Libraries, frameworks, language runtimes",
+        " Application : Standalone applications and services (default)",
         "",
-        "Level 2+ — Type (from Taxonomy, optional):",
-        "  Taxonomy > Sub-Type  : Detailed satellite asset classification",
-        "                         e.g., 'Software | Func > Platform Support'",
+        "Level 2+ Type (from Taxonomy, optional):",
+        " Taxonomy > Sub-Type : Detailed satellite asset classification",
+        " e.g., 'Software | Func > Platform Support'",
         "",
         "Classification Priority (first match wins):",
-        "  1. ⭐ Taxonomy Rules (satellite_asset_taxonomy.json) - SATELLITE-SPECIFIC",
-        "  2. 🔧 Legacy Keyword Rules (CATEGORY_RULES) - GENERIC",
-        "  3. 🏢 Vendor Rules (HW_VENDORS) - VENDOR-BASED",
-        "  4. 🎯 Catch-all: Software | Application - DEFAULT",
+        " 1. Taxonomy Rules (satellite_asset_taxonomy.json) - SATELLITE-SPECIFIC",
+        " 2. Legacy Keyword Rules (CATEGORY_RULES) - GENERIC",
+        " 3. Vendor Rules (HW_VENDORS) - VENDOR-BASED",
+        " 4. Catch-all: Software | Application - DEFAULT",
         "",
         "-" * 40,
         "Type Distribution",
@@ -552,11 +552,11 @@ def write_taxonomy(type_counts: dict, type_desc: dict) -> list:
     ]
 
     for key in sorted(type_counts, key=lambda k: type_counts[k], reverse=True):
-        lines.append(f"  {key}")
-        lines.append(f"    Count: {type_counts[key]}")
+        lines.append(f" {key}")
+        lines.append(f" Count: {type_counts[key]}")
         # Convert set to sorted list and take first 3 examples
         examples = sorted(type_desc.get(key, set()))[:3]
-        lines.append(f"    Examples: {', '.join(examples)}")
+        lines.append(f" Examples: {', '.join(examples)}")
         lines.append("")
 
     return lines
@@ -564,7 +564,7 @@ def write_taxonomy(type_counts: dict, type_desc: dict) -> list:
 
 def main():
     global TAXONOMY_RULES
-    
+
     print("=" * 60)
 
     TAXONOMY_RULES = load_taxonomy_rules()
@@ -582,7 +582,7 @@ def main():
 
     # --- Classify each row ---
     type_counts: dict[str, int] = defaultdict(int)
-    type_desc: dict[str, set] = defaultdict(set)  # type -> set of unique example products (no duplicates)
+    type_desc: dict[str, set] = defaultdict(set) # type -> set of unique example products (no duplicates)
 
     for row in rows:
         category, type_level, product_name = classify_product(row["x_cve_product"], row["x_cve_vendor"])
@@ -634,15 +634,15 @@ def main():
     print("Classification Summary")
     print("-" * 40)
     for key in sorted(type_counts, key=lambda k: type_counts[k], reverse=True):
-        print(f"  {key}: {type_counts[key]}")
+        print(f" {key}: {type_counts[key]}")
     total = sum(type_counts.values())
     print(f"\nTotal: {total} CVEs classified")
 
     # Show HW vs SW summary
     hw_total = sum(v for k, v in type_counts.items() if k.startswith("Hardware"))
     sw_total = sum(v for k, v in type_counts.items() if k.startswith("Software"))
-    print(f"  Hardware total: {hw_total}")
-    print(f"  Software total: {sw_total}")
+    print(f" Hardware total: {hw_total}")
+    print(f" Software total: {sw_total}")
     print("=" * 60)
 
 
